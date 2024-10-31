@@ -11,6 +11,7 @@ interface LogarithmicSpiralProps {
   involuteOffset: number
   involuteGrowth: number
   involuteColor: string
+  numSubdivisions?: number
 }
 
 export function LogarithmicSpiral({ 
@@ -22,12 +23,16 @@ export function LogarithmicSpiral({
   showInvolute,
   involuteOffset,
   involuteGrowth,
-  involuteColor
+  involuteColor,
+  numSubdivisions = 10
 }: LogarithmicSpiralProps) {
-  const spiralPoints = []
-  const involutePoints = []
+  const spiralPoints: THREE.Vector3[] = []
+  const involutePoints: THREE.Vector3[] = []
+  const subdivisionPoints: THREE.Vector3[] = []
+  const normalLines: THREE.Vector3[][] = []
   const thetaStep = (thetaEnd - thetaStart) / numPoints
 
+  // Calculate all points first
   for (let i = 0; i <= numPoints; i++) {
     const theta = thetaStart + (i * thetaStep)
     const r = a * Math.exp(b * theta)
@@ -35,9 +40,10 @@ export function LogarithmicSpiral({
     // Spiral point
     const x = r * Math.cos(theta)
     const y = r * Math.sin(theta)
-    spiralPoints.push(new THREE.Vector3(x, y, 0))
+    const spiralPoint = new THREE.Vector3(x, y, 0)
+    spiralPoints.push(spiralPoint)
 
-    // Calculate involute point only if needed
+    // Calculate involute point
     if (showInvolute) {
       const dr = b * r
       const dx = r * (-Math.sin(theta)) + dr * Math.cos(theta)
@@ -55,6 +61,25 @@ export function LogarithmicSpiral({
     }
   }
 
+  // Calculate subdivisions
+  if (showInvolute) {
+    const totalPoints = spiralPoints.length
+    const step = Math.floor(totalPoints / numSubdivisions)
+    
+    for (let i = 0; i < numSubdivisions; i++) {
+      const index = i * step
+      if (index < totalPoints) {
+        subdivisionPoints.push(spiralPoints[index])
+        
+        // Create normal line between spiral and involute
+        normalLines.push([
+          spiralPoints[index],
+          involutePoints[index]
+        ])
+      }
+    }
+  }
+
   return (
     <group>
       <Line 
@@ -63,11 +88,32 @@ export function LogarithmicSpiral({
         lineWidth={2}
       />
       {showInvolute && (
-        <Line 
-          points={involutePoints}
-          color={involuteColor}
-          lineWidth={2}
-        />
+        <>
+          <Line 
+            points={involutePoints}
+            color={involuteColor}
+            lineWidth={2}
+          />
+          {/* Draw normal lines */}
+          {normalLines.map((points, index) => (
+            <Line
+              key={`normal-${index}`}
+              points={points}
+              color="yellow"
+              lineWidth={1}
+            />
+          ))}
+          {/* Draw subdivision points */}
+          {subdivisionPoints.map((point, index) => (
+            <mesh
+              key={`point-${index}`}
+              position={point}
+            >
+              <boxGeometry args={[0.1, 0.1, 0.1]} />
+              <meshBasicMaterial color="red" />
+            </mesh>
+          ))}
+        </>
       )}
     </group>
   )

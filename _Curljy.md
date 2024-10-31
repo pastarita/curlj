@@ -78,7 +78,7 @@ Adapters
 //Graph of Objects needs to have a specific Data shape
     //Parent -> (1) Child -> (1) Child -> (1) Child ....
 
-Graph of Objects {
+GraphofObjects {
     Parent
     Size(bytes)
         Adapter
