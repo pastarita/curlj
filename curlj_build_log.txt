@@ -1,0 +1,50 @@
+curlj_build_log
+
+let's rip out the math logic for the logorithmic curve and make it into n optional case where we can select use a drop down in leva from several number of spiral functions that draw the base spiral.
+
+--
+next, we are going to implement sub dividing the primary spiral based on length in preparation to procedurally making spiral 'step-stone' areas which will be drawn by using SegementStart and SegmentEnd from where we'll draw normals which will interect to with the local segement of the involute and create a boundary area having four components: a LogarithmicSpiral curve section, a InvolvuteSpiral curve section, a LeadingEdge, and a TrailingEdge.
+
+In order to get this started will will subdivde the curve using values from an object with will we generate and call GraphOfObjects.json have a very specific shape being single nesting of children from one to the next—a so-called '1D Casscade'— with a schema approximately strucutred like this:  GraphOfObjects {
+    Parent
+    Size(bytes)
+        Adapter
+        Child
+        Size(bytes)
+            Adapter
+            Child
+            Size
+                ...
+
+edit the object type to work as described. This GraphOfObejcts data type is itself a derivate datatype of a real data set (for now which will alos be synthetic data) that we will use to hydrate our 3D spiral segement visualization component
+
+We will then make a parser function that grabs TotalNumberOfObjectsinObject: number and
+CompositionalityOfObject: number[] //bytes of data in succsesively nested object in the source object it derives from in a flat array.
+
+Using this data,  will will sudivide the main spiral curve propotionally based on the compositionality of the data in the respective objects
+
+-- 
+draw a line between spiralstart and involutestart as well as between spiralend involute end and create a sweepable path to create a surface between between them. the sweepable path should have bezier curve parameters which are modifiable by leva
+
+--
+
+next we need to grab the length of the curves and divide them
+	
+	via a concerted set of ranges (numbers) which themselves normalized to 100% whereby there is a proportional division of the length of the spiral int segments.
+
+	on either side of the segment, interdigitated between the proportional segment, interfacial spaces(margins) between the segments is made offset by a specific distance from the split point in both directions: all of which is again normalized to 100% to fit subdivide the total length of the spiral.
+
+
+equally, starting from the main spiral, with the involute inheriting the values there off.
+
+
+
+For this we need to create variables:
+
+let NumberOfSegments
+for i in segments we want to map the value for the proportional segmentation based on a value the is passed in via props which is always normalized to 100% beforehand.
+
+It should be implemented that that a straight line segment draw normal from the spiral should always interest the involute at a right angle
+
+show each newly created node point by highlighting in in red. If Threejs or react-three-fiber does not have a default way for rendering points, then render a very small square in place with a red border for each point.
+

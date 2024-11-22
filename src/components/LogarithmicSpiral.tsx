@@ -1,18 +1,7 @@
 import { Line } from '@react-three/drei/core/Line'
 import * as THREE from 'three'
-
-interface LogarithmicSpiralProps {
-  a: number
-  b: number
-  thetaStart: number
-  thetaEnd: number
-  numPoints: number
-  showInvolute: boolean
-  involuteOffset: number
-  involuteGrowth: number
-  involuteColor: string
-  numSubdivisions?: number
-}
+import { LogarithmicSpiralProps } from '../types/SpiralTypes'
+import { useControls, folder } from 'leva'
 
 export function LogarithmicSpiral({ 
   a, 
@@ -24,8 +13,18 @@ export function LogarithmicSpiral({
   involuteOffset,
   involuteGrowth,
   involuteColor,
-  numSubdivisions = 10
 }: LogarithmicSpiralProps) {
+  const { numSubdivisions } = useControls({
+    'Subdivision Settings': folder({
+      numSubdivisions: {
+        value: 10,
+        min: 1,
+        max: 20,
+        step: 1,
+      }
+    })
+  })
+
   const spiralPoints: THREE.Vector3[] = []
   const involutePoints: THREE.Vector3[] = []
   const subdivisionPoints: THREE.Vector3[] = []
